@@ -3,7 +3,7 @@ import { Badge } from '../components/ui/badge'
 import { ButtonLink } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { Separator } from '../components/ui/separator'
-import { EmailIcon, GitHubIcon, LinkedInIcon, RocketIcon } from '../components/Icons'
+import { DevpostIcon, EmailIcon, GitHubIcon, LinkedInIcon, RocketIcon } from '../components/Icons'
 import './Home.css'
 
 const skills = ['React', 'TypeScript', 'Java', 'Python', 'SQL', 'C#', 'Flask', 'AWS (learning)']
@@ -47,6 +47,9 @@ export default function Home() {
           </ButtonLink>
           <ButtonLink href="https://www.linkedin.com/in/juliank1m/" target="_blank" rel="noopener noreferrer" variant="secondary">
             <LinkedInIcon /> LinkedIn
+          </ButtonLink>
+          <ButtonLink href="https://devpost.com/juliank1m" target="_blank" rel="noopener noreferrer" variant="secondary" className="ui-button-devpost">
+            <DevpostIcon /> Devpost
           </ButtonLink>
           <ButtonLink href="mailto:juliankim4321@gmail.com" variant="outline">
             <EmailIcon /> Email

@@ -28,6 +28,24 @@
   flex-wrap: wrap;
 }
 
+.hero-actions .ui-button-default {
+  background: #e3f8f3;
+  border-color: #7bd6c5;
+  color: #284146;
+}
+
+.hero-actions .ui-button-secondary {
+  background: #ffe6e1;
+  border-color: #f0998d;
+  color: #5a3433;
+}
+
+.hero-actions .ui-button-devpost {
+  background: #efe5ff;
+  border-color: #b399e8;
+  color: #4a3878;
+}
+
 .skills-wrap {
   display: flex;
   gap: 0.45rem;

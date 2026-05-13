@@ -153,6 +153,12 @@ svg {
   color: #6a5a2d;
 }
 
+.ui-button-devpost {
+  border-color: #b399e8;
+  background: #efe5ff;
+  color: #4a3878;
+}
+
 .ui-button-sm {
   min-height: 1.7rem;
   padding: 0.18rem 0.45rem;

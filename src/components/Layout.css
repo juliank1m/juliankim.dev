@@ -23,6 +23,11 @@ body.cursor-custom label[for] {
   cursor: url('../assets/cursor/link.png') 4 0, pointer !important;
 }
 
+body.cursor-custom .project-link-card,
+body.cursor-custom .project-link-card * {
+  cursor: url('../assets/cursor/link.png') 4 0, pointer !important;
+}
+
 .site-noise {
   position: fixed;
   inset: -6%;
@@ -76,8 +81,9 @@ body.cursor-custom label[for] {
 .site-trail-layer {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 9999;
   pointer-events: none;
+  opacity: 0.6;
 }
 
 .topbar,
