@@ -4,6 +4,7 @@ import { ButtonLink } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { Separator } from '../components/ui/separator'
 import { DevpostIcon, EmailIcon, GitHubIcon, LinkedInIcon, RocketIcon } from '../components/Icons'
+import GitHubActivity from '../components/GitHubActivity'
 import { projects } from '../data/projects'
 import './Home.css'
 
@@ -41,6 +42,10 @@ export default function Home() {
             I am Julian Kim, a Software Engineering student at the University of Waterloo building full-stack products end-to-end.
           </CardDescription>
         </CardHeader>
+
+        <CardContent className="hero-activity">
+          <GitHubActivity />
+        </CardContent>
 
         <CardContent className="hero-actions">
           <ButtonLink href="https://github.com/juliank1m" target="_blank" rel="noopener noreferrer">

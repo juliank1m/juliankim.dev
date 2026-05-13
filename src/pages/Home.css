@@ -22,6 +22,11 @@
   max-width: 24ch;
 }
 
+.hero-activity {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .hero-actions {
   display: flex;
   gap: 0.5rem;

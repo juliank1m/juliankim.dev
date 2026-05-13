@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "fetch:github": "node scripts/fetch-github-activity.mjs",
+    "prebuild": "npm run fetch:github",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
