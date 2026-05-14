@@ -1,16 +1,13 @@
-import { useMemo } from 'react'
 import activityData from '../data/github-activity.json'
 import './GitHubActivity.css'
 
-type ActivityDay = {
-  date: string
-  count: number
-  level: 0 | 1 | 2 | 3 | 4
+type Tile = {
+  label: string
+  value: number
+  hue: 'teal' | 'lilac' | 'coral' | 'gold'
 }
 
-type ActivityWeek = {
-  days: ActivityDay[]
-}
+type MonthBucket = { key: string; label: string; count: number }
 
 type ActivitySnapshot = {
   username: string
@@ -20,141 +17,114 @@ type ActivitySnapshot = {
   totalPullRequests: number
   totalIssues: number
   totalRepositories: number
-  weeks: ActivityWeek[]
+  activeDays: number
+  longestStreak: number
+  currentStreak: number
+  busiestDay: { date: string; count: number }
+  busiestWeekday: { label: string; count: number }
+  monthly: MonthBucket[]
+  weekdays: { label: string; count: number }[]
 }
 
 const SNAPSHOT = activityData as ActivitySnapshot
 
-const PALETTE = ['#ecfbf7', '#c6f0e2', '#9ee7dc', '#5fc4b1', '#2f8273']
-
-const CELL = 12
-const GAP = 3
-const COL = CELL + GAP
-const CHART_LEFT = 24
-const CHART_TOP = 18
-
-const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-]
-const WEEKDAY_LABELS: { label: string; rowIndex: number }[] = [
-  { label: 'Mon', rowIndex: 1 },
-  { label: 'Wed', rowIndex: 3 },
-  { label: 'Fri', rowIndex: 5 },
-]
-
-function formatDate(iso: string) {
-  const d = new Date(iso + 'T00:00:00')
-  return d.toLocaleDateString(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  })
-}
+const HUES: Tile['hue'][] = ['teal', 'lilac', 'coral', 'gold']
+const CHART_HEIGHT = 96
+const BAR_MIN = 6
 
 export default function GitHubActivity() {
-  const weeks = SNAPSHOT.weeks
-  const totalContributions = SNAPSHOT.totalContributions
+  const a = SNAPSHOT
+  const tiles: Tile[] = [
+    { label: 'Total', value: a.totalContributions, hue: 'teal' },
+    { label: 'Commits', value: a.totalCommits, hue: 'lilac' },
+    { label: 'PRs', value: a.totalPullRequests, hue: 'coral' },
+    { label: 'Repos', value: a.totalRepositories, hue: 'gold' },
+  ]
 
-  const monthLabels = useMemo(() => {
-    const labels: { column: number; month: string }[] = []
-    let lastMonth = -1
-    weeks.forEach((week, weekIndex) => {
-      const firstDay = week.days[0]
-      if (!firstDay) return
-      const month = new Date(firstDay.date + 'T00:00:00').getMonth()
-      if (month !== lastMonth) {
-        labels.push({ column: weekIndex, month: MONTH_NAMES[month] })
-        lastMonth = month
-      }
-    })
-    return labels
-  }, [weeks])
+  const maxMonthly = Math.max(1, ...a.monthly.map((m) => m.count))
 
-  const chartWidth = weeks.length * COL - GAP
-  const totalWidth = CHART_LEFT + chartWidth
-  const chartHeight = 7 * COL - GAP
-  const totalHeight = CHART_TOP + chartHeight
+  const monthlyMax = a.monthly.reduce(
+    (best, m) => (m.count > best.count ? m : best),
+    { key: '', label: '—', count: 0 },
+  )
 
   return (
-    <section className="gh-activity" aria-label="GitHub activity">
-      <header className="gh-activity-head">
-        <span className="gh-activity-label">GitHub activity</span>
+    <section className="gh-stats" aria-label="GitHub activity">
+      <header className="gh-stats-head">
+        <span className="gh-stats-label">GitHub activity</span>
         <a
-          className="gh-activity-link"
-          href={`https://github.com/${SNAPSHOT.username}`}
+          className="gh-stats-link"
+          href={`https://github.com/${a.username}`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          @{SNAPSHOT.username}
+          @{a.username}
         </a>
       </header>
 
-      <div className="gh-activity-chart-wrap">
-        <svg
-          className="gh-activity-svg"
-          viewBox={`0 0 ${totalWidth} ${totalHeight}`}
-          preserveAspectRatio="xMinYMid meet"
-          role="img"
-          aria-label={`${totalContributions} contributions in the last year`}
-        >
-          {monthLabels.map((m) => (
-            <text
-              key={`month-${m.column}-${m.month}`}
-              x={CHART_LEFT + m.column * COL}
-              y={11}
-              className="gh-activity-month-label"
-            >
-              {m.month}
-            </text>
-          ))}
-
-          {WEEKDAY_LABELS.map(({ label, rowIndex }) => (
-            <text
-              key={label}
-              x={0}
-              y={CHART_TOP + rowIndex * COL + CELL - 2}
-              className="gh-activity-weekday-label"
-            >
-              {label}
-            </text>
-          ))}
-
-          {weeks.map((week, weekIndex) =>
-            week.days.map((day, dayIndex) => (
-              <rect
-                key={day.date || `${weekIndex}-${dayIndex}`}
-                x={CHART_LEFT + weekIndex * COL}
-                y={CHART_TOP + dayIndex * COL}
-                width={CELL}
-                height={CELL}
-                rx={1.5}
-                ry={1.5}
-                fill={PALETTE[day.level] ?? PALETTE[0]}
-                className="gh-activity-cell"
-              >
-                <title>
-                  {day.count} contribution{day.count === 1 ? '' : 's'}
-                  {day.date ? ` · ${formatDate(day.date)}` : ''}
-                </title>
-              </rect>
-            )),
-          )}
-        </svg>
+      <div className="gh-stats-tiles">
+        {tiles.map((tile) => (
+          <div
+            key={tile.label}
+            className={`gh-stats-tile gh-hue-${tile.hue}`}
+          >
+            <strong>{tile.value.toLocaleString()}</strong>
+            <span>{tile.label}</span>
+          </div>
+        ))}
       </div>
 
-      <footer className="gh-activity-foot">
-        <div className="gh-activity-total">
-          <strong>{totalContributions.toLocaleString()}</strong>
-          <span>contributions in the last year</span>
+      <div className="gh-stats-bars" aria-label="Monthly contributions">
+        <div className="gh-stats-bars-rule" aria-hidden="true">
+          <span>Monthly</span>
+          <em>
+            peak {monthlyMax.label.toUpperCase()} · {monthlyMax.count}
+          </em>
         </div>
-        <div className="gh-activity-legend" aria-hidden="true">
-          <span>Less</span>
-          {PALETTE.map((color) => (
-            <i key={color} style={{ background: color }} />
-          ))}
-          <span>More</span>
+        <div
+          className="gh-stats-bars-grid"
+          style={{ ['--chart-h' as string]: `${CHART_HEIGHT}px` }}
+        >
+          {a.monthly.map((m, idx) => {
+            const hue = HUES[idx % HUES.length]
+            const ratio = m.count / maxMonthly
+            const height = Math.round(ratio * (CHART_HEIGHT - BAR_MIN)) + BAR_MIN
+            return (
+              <div className="gh-stats-bar-col" key={m.key}>
+                <div className="gh-stats-bar-track">
+                  <div
+                    className={`gh-stats-bar gh-hue-${hue}`}
+                    style={{ height: `${height}px` }}
+                    title={`${m.count} contributions in ${m.label}`}
+                  >
+                    <span className="gh-stats-bar-value">
+                      {m.count > 0 ? m.count : ''}
+                    </span>
+                  </div>
+                </div>
+                <span className="gh-stats-bar-label">{m.label}</span>
+              </div>
+            )
+          })}
         </div>
+      </div>
+
+      <footer className="gh-stats-meta">
+        <span>
+          <b>{a.longestStreak}d</b> longest streak
+        </span>
+        <span className="gh-stats-meta-divider" aria-hidden="true">
+          ◆
+        </span>
+        <span>
+          busiest day <b>{a.busiestWeekday.label}</b>
+        </span>
+        <span className="gh-stats-meta-divider" aria-hidden="true">
+          ◆
+        </span>
+        <span>
+          <b>{a.activeDays}</b> active days
+        </span>
       </footer>
     </section>
   )

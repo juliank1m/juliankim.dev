@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Fetches GitHub contribution data via the GraphQL API and writes a static
-// JSON snapshot that the site bundles at build time. Runs as a `prebuild`
-// step; no token => skips silently so existing JSON is used.
+// Build-time GitHub activity fetcher. Pulls the contribution calendar via the
+// GraphQL API, then aggregates extra stats (monthly totals, weekday histogram,
+// streaks, busiest day) and writes a snapshot consumed by the site.
 
 import { mkdir, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -25,6 +25,12 @@ const LEVEL_MAP = {
   THIRD_QUARTILE: 3,
   FOURTH_QUARTILE: 4,
 }
+
+const MONTH_NAMES = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+]
+const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const QUERY = `
   query ($username: String!) {
@@ -58,10 +64,8 @@ async function fetchActivity() {
       )
       return
     }
-    console.warn(
-      '[fetch-github-activity] No token and no existing snapshot. Writing empty placeholder.',
-    )
-    await writeSnapshot(emptySnapshot())
+    console.warn('[fetch-github-activity] No token. Writing empty placeholder.')
+    await writeSnapshot(buildSnapshot([]))
     return
   }
 
@@ -93,55 +97,115 @@ async function fetchActivity() {
   }
 
   const calendar = collection.contributionCalendar
-  const snapshot = {
-    username: USERNAME,
-    fetchedAt: new Date().toISOString(),
+  const days = calendar.weeks.flatMap((w) =>
+    w.contributionDays.map((d) => ({
+      date: d.date,
+      count: d.contributionCount,
+      level: LEVEL_MAP[d.contributionLevel] ?? 0,
+    })),
+  )
+
+  const snapshot = buildSnapshot(days, {
     totalContributions: calendar.totalContributions,
     totalCommits: collection.totalCommitContributions,
     totalPullRequests: collection.totalPullRequestContributions,
     totalIssues: collection.totalIssueContributions,
     totalRepositories: collection.totalRepositoriesWithContributedCommits,
-    weeks: calendar.weeks.map((week) => ({
-      days: week.contributionDays.map((day) => ({
-        date: day.date,
-        count: day.contributionCount,
-        level: LEVEL_MAP[day.contributionLevel] ?? 0,
-      })),
-    })),
-  }
+  })
 
   await writeSnapshot(snapshot)
   console.log(
-    `[fetch-github-activity] Wrote ${calendar.totalContributions} contributions across ${calendar.weeks.length} weeks for @${USERNAME}.`,
+    `[fetch-github-activity] Wrote ${snapshot.totalContributions} contributions ` +
+      `(${snapshot.monthly.length} months, longest streak ${snapshot.longestStreak}d) for @${USERNAME}.`,
   )
 }
 
-function emptySnapshot() {
-  const today = new Date()
-  const weeks = []
-  for (let w = 51; w >= 0; w--) {
-    const days = []
-    for (let d = 6; d >= 0; d--) {
-      const date = new Date(today)
-      date.setDate(today.getDate() - (w * 7 + d))
-      days.push({
-        date: date.toISOString().slice(0, 10),
-        count: 0,
-        level: 0,
-      })
-    }
-    weeks.push({ days })
+function buildSnapshot(days, totals = {}) {
+  const sorted = [...days].sort((a, b) => (a.date < b.date ? -1 : 1))
+
+  // Build a chronological list of the last 12 month buckets so the chart is
+  // stable even when input data is empty.
+  const monthly = lastTwelveMonths(sorted)
+
+  // Weekday histogram (Sun..Sat)
+  const weekdayCounts = new Array(7).fill(0)
+  for (const d of sorted) {
+    const weekday = new Date(d.date + 'T00:00:00').getDay()
+    weekdayCounts[weekday] += d.count
   }
+  const weekdays = weekdayCounts.map((count, idx) => ({
+    label: WEEKDAY_NAMES[idx],
+    count,
+  }))
+
+  // Streaks
+  let longestStreak = 0
+  let currentStreak = 0
+  let runningStreak = 0
+  for (const d of sorted) {
+    if (d.count > 0) {
+      runningStreak += 1
+      if (runningStreak > longestStreak) longestStreak = runningStreak
+    } else {
+      runningStreak = 0
+    }
+  }
+  // Current streak (ending most recent day)
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    if (sorted[i].count > 0) currentStreak += 1
+    else break
+  }
+
+  const activeDays = sorted.filter((d) => d.count > 0).length
+  const busiest = sorted.reduce(
+    (best, d) => (d.count > best.count ? d : best),
+    { date: '', count: 0 },
+  )
+  const busiestWeekday = weekdays.reduce(
+    (best, w) => (w.count > best.count ? w : best),
+    { label: '—', count: 0 },
+  )
+
   return {
     username: USERNAME,
     fetchedAt: new Date().toISOString(),
-    totalContributions: 0,
-    totalCommits: 0,
-    totalPullRequests: 0,
-    totalIssues: 0,
-    totalRepositories: 0,
-    weeks,
+    totalContributions: totals.totalContributions ?? sorted.reduce((s, d) => s + d.count, 0),
+    totalCommits: totals.totalCommits ?? 0,
+    totalPullRequests: totals.totalPullRequests ?? 0,
+    totalIssues: totals.totalIssues ?? 0,
+    totalRepositories: totals.totalRepositories ?? 0,
+    activeDays,
+    longestStreak,
+    currentStreak,
+    busiestDay: busiest,
+    busiestWeekday,
+    monthly,
+    weekdays,
   }
+}
+
+function lastTwelveMonths(sortedDays) {
+  const counts = new Map()
+  for (const d of sortedDays) {
+    const key = d.date.slice(0, 7)
+    counts.set(key, (counts.get(key) ?? 0) + d.count)
+  }
+
+  const anchor = sortedDays.length
+    ? new Date(sortedDays[sortedDays.length - 1].date + 'T00:00:00')
+    : new Date()
+
+  const months = []
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(anchor.getFullYear(), anchor.getMonth() - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    months.push({
+      key,
+      label: MONTH_NAMES[d.getMonth()],
+      count: counts.get(key) ?? 0,
+    })
+  }
+  return months
 }
 
 async function writeSnapshot(snapshot) {
@@ -152,8 +216,8 @@ async function writeSnapshot(snapshot) {
 fetchActivity().catch((err) => {
   console.error('[fetch-github-activity] Failed:', err.message)
   if (!existsSync(OUT_PATH)) {
-    console.warn('[fetch-github-activity] Writing empty placeholder snapshot.')
-    writeSnapshot(emptySnapshot()).catch(() => {})
+    console.warn('[fetch-github-activity] Writing empty placeholder.')
+    writeSnapshot(buildSnapshot([])).catch(() => {})
   }
   process.exitCode = 0
 })
