@@ -6,6 +6,7 @@ import FloatingWindow from './FloatingWindow'
 import WindowDock from './WindowDock'
 import MusicPlayer from './MusicPlayer'
 import Terminal from './Terminal'
+import SnakeGame from './SnakeGame'
 import './Layout.css'
 
 const labels = ["available for summer '26 internships", 'full-stack | AI', 'software eng @ uwaterloo']
@@ -85,6 +86,7 @@ export default function Layout() {
     sticky: false,
     music: false,
     term: false,
+    snake: false,
   })
 
   useEffect(() => {
@@ -235,12 +237,25 @@ export default function Layout() {
             <Terminal />
           </FloatingWindow>
 
+          <FloatingWindow
+            id="snake"
+            title="SNAKE.EXE"
+            defaultX={24}
+            defaultY={220}
+            variant="snake"
+            open={openMap.snake}
+            onMinimize={() => toggle('snake')}
+          >
+            <SnakeGame />
+          </FloatingWindow>
+
           <WindowDock
             items={[
               { id: 'clock', label: 'CLOCK' },
               { id: 'sticky', label: 'NOTE' },
               { id: 'music', label: 'MUSIC' },
               { id: 'term', label: 'TERM' },
+              { id: 'snake', label: 'SNAKE' },
             ]}
             openMap={openMap}
             onToggle={toggle}

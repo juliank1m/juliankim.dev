@@ -1,0 +1,210 @@
+.float-win.snake {
+  width: 290px;
+  background: #ecfbf7;
+  border-color: #8adfce;
+}
+
+.float-win.snake .fw-bar {
+  background: #8adfce;
+  color: #1d4a44;
+}
+
+.fw-snake-body {
+  padding: 11px 13px 13px;
+  display: grid;
+  gap: 9px;
+}
+
+.fw-snake-tabs {
+  display: flex;
+  gap: 5px;
+}
+
+.fw-snake-tab {
+  flex: 1;
+  border: 2px solid #8adfce;
+  background: #ecfbf7;
+  color: #4d8a7c;
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  padding: 6px 0;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fw-snake-tab:hover { background: #d6f5ec; }
+
+.fw-snake-tab.active {
+  background: #cdf4be;
+  color: #2d6a5b;
+  border-color: #56b39a;
+}
+
+.fw-snake-board {
+  background: #1a1830;
+  border: 2px solid #5c5478;
+  width: 260px;
+  height: 260px;
+  position: relative;
+  image-rendering: pixelated;
+}
+
+.fw-snake-board canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.fw-snake-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  color: #2d6a5b;
+  letter-spacing: 0.05em;
+}
+
+.fw-snake-meta button {
+  border: 2px solid #56b39a;
+  background: #cdf4be;
+  color: #2d6a5b;
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.fw-snake-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(26, 24, 48, 0.88);
+  color: #cdf4be;
+  font-family: 'Silkscreen', monospace;
+  font-size: 11px;
+  text-align: center;
+  padding: 14px;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  cursor: pointer;
+}
+
+.fw-snake-overlay b {
+  display: block;
+  color: white;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.fw-snake-save {
+  margin: 10px 0 6px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.fw-initials {
+  background: #1a1830;
+  border: 2px solid #cdf4be;
+  color: #cdf4be;
+  font-family: 'Silkscreen', monospace;
+  font-size: 14px;
+  width: 56px;
+  padding: 4px 5px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+  outline: 0;
+}
+
+.fw-snake-save button {
+  border: 2px solid #cdf4be;
+  background: #cdf4be;
+  color: #1a1830;
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  padding: 5px 8px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.fw-snake-saved {
+  color: #cdf4be;
+  font-size: 10px;
+  margin: 8px 0;
+  letter-spacing: 0.08em;
+}
+
+.fw-snake-retry {
+  margin-top: 8px;
+  color: #9bb5f7;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.fw-leaderboard {
+  background: #1a1830;
+  border: 2px solid #5c5478;
+  padding: 12px 11px;
+  font-family: 'Silkscreen', monospace;
+  font-size: 12px;
+  color: #cdf4be;
+  height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fw-leaderboard::-webkit-scrollbar { width: 6px; }
+.fw-leaderboard::-webkit-scrollbar-thumb { background: #5c5478; }
+
+.fw-leader-row {
+  display: grid;
+  grid-template-columns: 26px 1fr 60px;
+  gap: 8px;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.fw-leader-rank { color: #ffc1ba; }
+.fw-leader-name { color: #fff; letter-spacing: 0.18em; }
+.fw-leader-score { color: #cdf4be; text-align: right; }
+.fw-leader-row.top1 .fw-leader-rank { color: #ffe8a1; }
+.fw-leader-row.top1 .fw-leader-name { color: #ffe8a1; }
+
+.fw-leader-empty {
+  text-align: center;
+  color: #5c5478;
+  font-size: 11px;
+  margin: auto 0;
+  letter-spacing: 0.08em;
+  line-height: 1.9;
+}
+
+.fw-leader-empty b {
+  color: #9bb5f7;
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.fw-leader-clear {
+  margin-top: auto;
+  border: 0;
+  background: transparent;
+  color: #5c5478;
+  font-family: 'Silkscreen', monospace;
+  font-size: 9px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  align-self: center;
+  padding: 4px;
+}
+
+.fw-leader-clear:hover { color: #ffb3a0; }
