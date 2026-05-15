@@ -1,0 +1,116 @@
+.float-win {
+  position: fixed;
+  z-index: 3;
+  border: 3px solid var(--line);
+  background: white;
+  box-shadow: 5px 5px 0 #d8d2f0;
+  width: 220px;
+  user-select: none;
+  font-family: 'Silkscreen', monospace;
+}
+
+.float-win .fw-bar {
+  background: var(--line);
+  color: white;
+  padding: 6px 9px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: grab;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.float-win .fw-bar:active { cursor: grabbing; }
+
+/* minimize button */
+.float-win .fw-min {
+  background: white;
+  color: var(--ink-1);
+  border: 2px solid white;
+  width: 22px;
+  height: 18px;
+  font-family: 'Silkscreen', monospace;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.float-win .fw-min:hover { background: var(--lime); }
+.float-win.sticky .fw-min { color: #4a3d18; }
+
+.float-win .fw-body {
+  padding: 11px 13px 13px;
+  font-size: 13px;
+  color: var(--ink-1);
+}
+
+/* clock window content */
+.fw-clock-time {
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--ink-1);
+  text-align: center;
+  margin: 5px 0 3px;
+}
+
+.fw-clock-date {
+  font-size: 9px;
+  text-align: center;
+  color: var(--ink-3);
+  letter-spacing: 0.05em;
+  margin-bottom: 5px;
+}
+
+.fw-clock-tz {
+  font-size: 8px;
+  text-align: center;
+  color: var(--ink-3);
+}
+
+/* sticky-note variant */
+.float-win.sticky {
+  background: #fff9db;
+  border-color: #f3cf73;
+}
+
+.float-win.sticky .fw-bar {
+  background: #f3cf73;
+  color: #4a3d18;
+}
+
+.fw-sticky-body {
+  padding: 12px 13px 14px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 15px;
+  color: #5a4a1d;
+  line-height: 1.35;
+}
+
+.fw-sticky-body strong {
+  display: block;
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  color: #6a5a2d;
+  margin-bottom: 5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fw-sticky-body a {
+  display: inline-block;
+  margin-top: 7px;
+  border-bottom: 1px dashed #b89540;
+  color: #6a5a2d;
+}
+
+/* hide desktop accessories on narrow viewports */
+@media (max-width: 1240px) {
+  .float-win { display: none; }
+}

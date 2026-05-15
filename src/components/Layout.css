@@ -28,6 +28,16 @@ body.cursor-custom .project-link-card * {
   cursor: url('../assets/cursor/link.png') 4 0, pointer !important;
 }
 
+body.cursor-custom .float-win .fw-bar,
+body.cursor-custom .float-win .fw-bar * {
+  cursor: url('../assets/cursor/grabber.png') 11 11, grab !important;
+}
+
+body.cursor-custom .float-win .fw-bar .fw-min,
+body.cursor-custom .float-win .fw-bar .fw-min * {
+  cursor: url('../assets/cursor/link.png') 4 0, pointer !important;
+}
+
 .site-noise {
   position: fixed;
   inset: -6%;

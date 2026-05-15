@@ -2,16 +2,86 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import PixelTrail from './PixelTrail'
 import PixelPet from './PixelPet'
+import FloatingWindow from './FloatingWindow'
+import WindowDock from './WindowDock'
 import './Layout.css'
 
 const labels = ["available for summer '26 internships", 'full-stack | AI', 'software eng @ uwaterloo']
 const TRAIL_GRID_SIZE = 160
+
+/* ---------- floating-window content ---------- */
+
+function ClockContent() {
+  const [now, setNow] = useState(new Date())
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+  const h = String(now.getHours()).padStart(2, '0')
+  const m = String(now.getMinutes()).padStart(2, '0')
+  const s = String(now.getSeconds()).padStart(2, '0')
+  const date = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  return (
+    <>
+      <div className="fw-clock-time">
+        {h}:{m}:{s}
+      </div>
+      <div className="fw-clock-date">{date.toUpperCase()}</div>
+      <div className="fw-clock-tz">~ WATERLOO, ON ~</div>
+    </>
+  )
+}
+
+function StickyContent() {
+  return (
+    <>
+      <strong>★ status</strong>
+      Available for <b>summer '26</b> internships. drop me a line if you're hiring.
+      <a href="mailto:juliankim4321@gmail.com">→ email me</a>
+    </>
+  )
+}
+
+/* ---------- open/minimized state for windows ---------- */
+
+type OpenMap = Record<string, boolean>
+const OPEN_KEY = 'fw-open'
+
+function useWindowOpenState(defaults: OpenMap) {
+  const [openMap, setOpenMap] = useState<OpenMap>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(OPEN_KEY) || 'null')
+      if (saved && typeof saved === 'object') return { ...defaults, ...saved }
+    } catch {
+      /* ignore */
+    }
+    return defaults
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(OPEN_KEY, JSON.stringify(openMap))
+    } catch {
+      /* ignore */
+    }
+  }, [openMap])
+
+  const toggle = (id: string) => setOpenMap((m) => ({ ...m, [id]: !m[id] }))
+  return { openMap, toggle }
+}
+
+/* ---------- the layout ---------- */
 
 export default function Layout() {
   const location = useLocation()
   const [isFinePointerDevice, setIsFinePointerDevice] = useState(false)
   const eventSource = typeof document !== 'undefined' ? document.body : undefined
   const isProjectsRoute = location.pathname.startsWith('/projects')
+
+  const { openMap, toggle } = useWindowOpenState({
+    clock: false,
+    sticky: false,
+  })
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
@@ -39,6 +109,8 @@ export default function Layout() {
       }
     }
   }, [])
+
+  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1280
 
   return (
     <div className="site-shell">
@@ -107,6 +179,44 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Desktop accessories + the sidebar dock that opens them.
+          All hidden under 1240px viewport (see component CSS). */}
+      {isFinePointerDevice ? (
+        <>
+          <FloatingWindow
+            id="clock"
+            title="CLOCK.EXE"
+            defaultX={24}
+            defaultY={120}
+            open={openMap.clock}
+            onMinimize={() => toggle('clock')}
+          >
+            <ClockContent />
+          </FloatingWindow>
+
+          <FloatingWindow
+            id="sticky"
+            title="NOTE.TXT"
+            defaultX={viewportWidth - 250}
+            defaultY={140}
+            sticky
+            open={openMap.sticky}
+            onMinimize={() => toggle('sticky')}
+          >
+            <StickyContent />
+          </FloatingWindow>
+
+          <WindowDock
+            items={[
+              { id: 'clock', label: 'CLOCK' },
+              { id: 'sticky', label: 'NOTE' },
+            ]}
+            openMap={openMap}
+            onToggle={toggle}
+          />
+        </>
+      ) : null}
     </div>
   )
 }
