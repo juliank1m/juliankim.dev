@@ -1,0 +1,45 @@
+.tilt-card {
+  position: relative;
+  transform-style: preserve-3d;
+  /* Base perspective so inner translateZ layers render correctly at rest. */
+  transform: perspective(900px);
+  transition: transform 220ms ease-out, box-shadow 220ms ease-out;
+  will-change: transform;
+}
+
+.tilt-card.tilt-active {
+  transition: transform 80ms linear;
+  box-shadow: 10px 10px 0 #d8d2f0;
+}
+
+/* Inner-layer helpers — put on header & content so text floats at depth. */
+.tilt-card .tilt-layer-mid { transform: translateZ(18px); }
+.tilt-card .tilt-layer-top { transform: translateZ(34px); }
+
+/* Corner accent — a small offset chip that pops the most on Z. */
+.tilt-accent {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  box-shadow: 3px 3px 0 #d8d2f0;
+  transform: translateZ(28px);
+  pointer-events: none;
+}
+
+.tilt-accent-teal .tilt-accent { background: #8adfce; color: #56b39a; }
+.tilt-accent-coral .tilt-accent { background: var(--coral); color: #c98a82; }
+.tilt-accent-gold .tilt-accent { background: var(--gold); color: #c79f3a; }
+.tilt-accent-lime .tilt-accent { background: var(--lime); color: #7eaf6c; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card,
+  .tilt-card.tilt-active { transition: none; }
+}
+
+/* On touch devices, skip the tilt — looks janky without a cursor. */
+@media (hover: none) {
+  .tilt-card:hover { transform: none !important; }
+}

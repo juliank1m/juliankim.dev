@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/ui/badge'
-import { ButtonLink } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { Separator } from '../components/ui/separator'
+import { MagneticButtonLink } from '../components/MagneticButton'
+import { useMagnetic } from '../hooks/useMagnetic'
+import TiltCard from '../components/TiltCard'
 import { DevpostIcon, EmailIcon, GitHubIcon, LinkedInIcon, RocketIcon } from '../components/Icons'
 import GitHubActivity from '../components/GitHubActivity'
 import { projects } from '../data/projects'
@@ -14,14 +16,17 @@ const strengths = [
   {
     title: 'Product-minded engineering',
     body: 'I build with reliability and user outcomes in mind, from architecture choices to front-end clarity.',
+    accent: 'teal' as const,
   },
   {
     title: 'End-to-end execution',
     body: 'I am comfortable moving across frontend, backend, data design, and deployment to keep momentum high.',
+    accent: 'coral' as const,
   },
   {
     title: 'Iterative delivery',
     body: 'I prefer small, testable steps and measurable improvements over one large risky release.',
+    accent: 'gold' as const,
   },
 ]
 
@@ -32,6 +37,12 @@ const highlights = [
 ]
 
 export default function Home() {
+  const {
+    ref: projectsRef,
+    onMouseMove: projectsOnMouseMove,
+    onMouseLeave: projectsOnMouseLeave,
+  } = useMagnetic<HTMLAnchorElement>({ strength: 12, lift: 8 })
+
   return (
     <section className="home-page">
       <Card className="hero-card">
@@ -48,19 +59,26 @@ export default function Home() {
         </CardContent>
 
         <CardContent className="hero-actions">
-          <ButtonLink href="https://github.com/juliank1m" target="_blank" rel="noopener noreferrer">
+          <MagneticButtonLink href="https://github.com/juliank1m" target="_blank" rel="noopener noreferrer">
             <GitHubIcon /> GitHub
-          </ButtonLink>
-          <ButtonLink href="https://www.linkedin.com/in/juliank1m/" target="_blank" rel="noopener noreferrer" variant="secondary">
+          </MagneticButtonLink>
+          <MagneticButtonLink href="https://www.linkedin.com/in/juliank1m/" target="_blank" rel="noopener noreferrer" variant="secondary">
             <LinkedInIcon /> LinkedIn
-          </ButtonLink>
-          <ButtonLink href="https://devpost.com/juliank1m" target="_blank" rel="noopener noreferrer" variant="secondary" className="ui-button-devpost">
+          </MagneticButtonLink>
+          <MagneticButtonLink href="https://devpost.com/juliank1m" target="_blank" rel="noopener noreferrer" variant="secondary" className="ui-button-devpost">
             <DevpostIcon /> Devpost
-          </ButtonLink>
-          <ButtonLink href="mailto:juliankim4321@gmail.com" variant="outline">
+          </MagneticButtonLink>
+          <MagneticButtonLink href="mailto:juliankim4321@gmail.com" variant="outline">
             <EmailIcon /> Email
-          </ButtonLink>
-          <Link to="/projects" className="ui-button ui-button-ghost ui-button-md">
+          </MagneticButtonLink>
+          <Link
+            to="/projects"
+            className="ui-button ui-button-ghost ui-button-md"
+            ref={projectsRef}
+            onMouseMove={projectsOnMouseMove}
+            onMouseLeave={projectsOnMouseLeave}
+            style={{ transition: 'transform 180ms ease-out, box-shadow 180ms ease-out' }}
+          >
             <RocketIcon /> View projects
           </Link>
         </CardContent>
@@ -76,14 +94,14 @@ export default function Home() {
 
       <section className="home-grid">
         {strengths.map((item) => (
-          <Card key={item.title}>
-            <CardHeader>
+          <TiltCard key={item.title} accentTone={item.accent}>
+            <CardHeader className="tilt-layer-top">
               <CardTitle>{item.title}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="tilt-layer-mid">
               <CardDescription>{item.body}</CardDescription>
             </CardContent>
-          </Card>
+          </TiltCard>
         ))}
       </section>
 
