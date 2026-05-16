@@ -1,23 +1,3 @@
-#!/usr/bin/env node
-// Build-time GitHub activity fetcher. Pulls the contribution calendar via the
-// GraphQL API, then aggregates extra stats (monthly totals, weekday histogram,
-// streaks, busiest day) and writes a snapshot consumed by the site.
-
-import { mkdir, writeFile } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const USERNAME = process.env.GH_ACTIVITY_USER || 'juliank1m'
-const TOKEN =
-  process.env.GH_PAT ||
-  process.env.GITHUB_ACTIVITY_TOKEN ||
-  process.env.GITHUB_TOKEN
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const OUT_PATH = resolve(__dirname, '..', 'src', 'data', 'github-activity.json')
-
 const LEVEL_MAP = {
   NONE: 0,
   FIRST_QUARTILE: 1,
@@ -49,34 +29,32 @@ const QUERY = `
         totalCommitContributions
         totalPullRequestContributions
         totalIssueContributions
+        totalPullRequestReviewContributions
+        totalRepositoryContributions
+        restrictedContributionsCount
         totalRepositoriesWithContributedCommits
       }
     }
   }
 `
 
-async function fetchActivity() {
-  if (!TOKEN) {
-    if (existsSync(OUT_PATH)) {
-      console.warn(
-        '[fetch-github-activity] No GH_PAT / GITHUB_TOKEN set. Keeping existing snapshot at',
-        OUT_PATH,
-      )
-      return
-    }
-    console.warn('[fetch-github-activity] No token. Writing empty placeholder.')
-    await writeSnapshot(buildSnapshot([]))
-    return
+export async function fetchGitHubActivity({
+  username = 'juliank1m',
+  token,
+  userAgent = 'juliankim-profile',
+} = {}) {
+  if (!token) {
+    throw new Error('Missing GitHub token')
   }
 
   const res = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
-      Authorization: `bearer ${TOKEN}`,
+      Authorization: `bearer ${token}`,
       'Content-Type': 'application/json',
-      'User-Agent': 'juliankim-profile-build',
+      'User-Agent': userAgent,
     },
-    body: JSON.stringify({ query: QUERY, variables: { username: USERNAME } }),
+    body: JSON.stringify({ query: QUERY, variables: { username } }),
   })
 
   if (!res.ok) {
@@ -105,29 +83,23 @@ async function fetchActivity() {
     })),
   )
 
-  const snapshot = buildSnapshot(days, {
+  return buildSnapshot(days, {
+    username,
     totalContributions: calendar.totalContributions,
     totalCommits: collection.totalCommitContributions,
     totalPullRequests: collection.totalPullRequestContributions,
     totalIssues: collection.totalIssueContributions,
+    totalPullRequestReviews: collection.totalPullRequestReviewContributions,
+    totalRepositoryContributions: collection.totalRepositoryContributions,
+    restrictedContributions: collection.restrictedContributionsCount,
     totalRepositories: collection.totalRepositoriesWithContributedCommits,
   })
-
-  await writeSnapshot(snapshot)
-  console.log(
-    `[fetch-github-activity] Wrote ${snapshot.totalContributions} contributions ` +
-      `(${snapshot.monthly.length} months, longest streak ${snapshot.longestStreak}d) for @${USERNAME}.`,
-  )
 }
 
 function buildSnapshot(days, totals = {}) {
   const sorted = [...days].sort((a, b) => (a.date < b.date ? -1 : 1))
-
-  // Build a chronological list of the last 12 month buckets so the chart is
-  // stable even when input data is empty.
   const monthly = lastTwelveMonths(sorted)
 
-  // Weekday histogram (Sun..Sat)
   const weekdayCounts = new Array(7).fill(0)
   for (const d of sorted) {
     const weekday = new Date(d.date + 'T00:00:00').getDay()
@@ -138,7 +110,6 @@ function buildSnapshot(days, totals = {}) {
     count,
   }))
 
-  // Streaks
   let longestStreak = 0
   let currentStreak = 0
   let runningStreak = 0
@@ -150,7 +121,7 @@ function buildSnapshot(days, totals = {}) {
       runningStreak = 0
     }
   }
-  // Current streak (ending most recent day)
+
   for (let i = sorted.length - 1; i >= 0; i--) {
     if (sorted[i].count > 0) currentStreak += 1
     else break
@@ -163,16 +134,19 @@ function buildSnapshot(days, totals = {}) {
   )
   const busiestWeekday = weekdays.reduce(
     (best, w) => (w.count > best.count ? w : best),
-    { label: '—', count: 0 },
+    { label: '-', count: 0 },
   )
 
   return {
-    username: USERNAME,
+    username: totals.username ?? 'juliank1m',
     fetchedAt: new Date().toISOString(),
     totalContributions: totals.totalContributions ?? sorted.reduce((s, d) => s + d.count, 0),
     totalCommits: totals.totalCommits ?? 0,
     totalPullRequests: totals.totalPullRequests ?? 0,
     totalIssues: totals.totalIssues ?? 0,
+    totalPullRequestReviews: totals.totalPullRequestReviews ?? 0,
+    totalRepositoryContributions: totals.totalRepositoryContributions ?? 0,
+    restrictedContributions: totals.restrictedContributions ?? 0,
     totalRepositories: totals.totalRepositories ?? 0,
     activeDays,
     longestStreak,
@@ -207,17 +181,3 @@ function lastTwelveMonths(sortedDays) {
   }
   return months
 }
-
-async function writeSnapshot(snapshot) {
-  await mkdir(dirname(OUT_PATH), { recursive: true })
-  await writeFile(OUT_PATH, JSON.stringify(snapshot, null, 2) + '\n', 'utf8')
-}
-
-fetchActivity().catch((err) => {
-  console.error('[fetch-github-activity] Failed:', err.message)
-  if (!existsSync(OUT_PATH)) {
-    console.warn('[fetch-github-activity] Writing empty placeholder.')
-    writeSnapshot(buildSnapshot([])).catch(() => {})
-  }
-  process.exitCode = 0
-})

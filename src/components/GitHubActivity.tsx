@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import activityData from '../data/github-activity.json'
 import './GitHubActivity.css'
 
@@ -5,6 +6,7 @@ type Tile = {
   label: string
   value: number
   hue: 'teal' | 'lilac' | 'coral' | 'gold'
+  title?: string
 }
 
 type MonthBucket = { key: string; label: string; count: number }
@@ -16,6 +18,9 @@ type ActivitySnapshot = {
   totalCommits: number
   totalPullRequests: number
   totalIssues: number
+  totalPullRequestReviews?: number
+  totalRepositoryContributions?: number
+  restrictedContributions?: number
   totalRepositories: number
   activeDays: number
   longestStreak: number
@@ -31,12 +36,51 @@ const SNAPSHOT = activityData as ActivitySnapshot
 const HUES: Tile['hue'][] = ['teal', 'lilac', 'coral', 'gold']
 
 export default function GitHubActivity() {
-  const a = SNAPSHOT
+  const [activity, setActivity] = useState(SNAPSHOT)
+  const a = activity
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    fetch('/api/github-activity', { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`GitHub activity fetch failed: ${res.status}`)
+        return res.json() as Promise<ActivitySnapshot>
+      })
+      .then(setActivity)
+      .catch((err) => {
+        if (err instanceof Error && err.name === 'AbortError') return
+      })
+
+    return () => controller.abort()
+  }, [])
+
+  const restrictedContributions = a.restrictedContributions ?? 0
   const tiles: Tile[] = [
-    { label: 'Total', value: a.totalContributions, hue: 'teal' },
-    { label: 'Commits', value: a.totalCommits, hue: 'lilac' },
-    { label: 'PRs', value: a.totalPullRequests, hue: 'coral' },
-    { label: 'Repos', value: a.totalRepositories, hue: 'gold' },
+    {
+      label: 'Total',
+      value: a.totalContributions,
+      hue: 'teal',
+      title: 'Matches the GitHub contribution calendar total',
+    },
+    {
+      label: 'Commits',
+      value: a.totalCommits,
+      hue: 'lilac',
+      title: 'Public commit contributions reported by GitHub',
+    },
+    {
+      label: 'PRs',
+      value: a.totalPullRequests,
+      hue: 'coral',
+      title: 'Pull request contributions reported by GitHub',
+    },
+    {
+      label: 'Private',
+      value: restrictedContributions,
+      hue: 'gold',
+      title: 'Restricted private contributions included in the GitHub total',
+    },
   ]
 
   const maxMonthly = Math.max(1, ...a.monthly.map((m) => m.count))
@@ -65,6 +109,7 @@ export default function GitHubActivity() {
           <div
             key={tile.label}
             className={`gh-stats-tile gh-hue-${tile.hue}`}
+            title={tile.title}
           >
             <strong>{tile.value.toLocaleString()}</strong>
             <span>{tile.label}</span>
@@ -120,6 +165,12 @@ export default function GitHubActivity() {
         </span>
         <span>
           <b>{a.activeDays}</b> active days
+        </span>
+        <span className="gh-stats-meta-divider" aria-hidden="true">
+          ◆
+        </span>
+        <span>
+          <b>{a.totalRepositories}</b> repos
         </span>
       </footer>
     </section>

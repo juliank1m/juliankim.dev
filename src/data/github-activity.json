@@ -1,22 +1,25 @@
 {
   "username": "juliank1m",
-  "fetchedAt": "2026-05-14T02:54:13.300Z",
-  "totalContributions": 447,
-  "totalCommits": 397,
-  "totalPullRequests": 26,
+  "fetchedAt": "2026-05-16T03:26:20.467Z",
+  "totalContributions": 477,
+  "totalCommits": 329,
+  "totalPullRequests": 25,
   "totalIssues": 0,
-  "totalRepositories": 25,
-  "activeDays": 61,
-  "longestStreak": 15,
-  "currentStreak": 15,
+  "totalPullRequestReviews": 0,
+  "totalRepositoryContributions": 12,
+  "restrictedContributions": 111,
+  "totalRepositories": 13,
+  "activeDays": 63,
+  "longestStreak": 17,
+  "currentStreak": 17,
   "busiestDay": {
     "date": "2026-01-31",
     "count": 34,
     "level": 4
   },
   "busiestWeekday": {
-    "label": "Sat",
-    "count": 84
+    "label": "Fri",
+    "count": 95
   },
   "monthly": [
     {
@@ -77,7 +80,7 @@
     {
       "key": "2026-05",
       "label": "May",
-      "count": 65
+      "count": 95
     }
   ],
   "weekdays": [
@@ -95,15 +98,15 @@
     },
     {
       "label": "Wed",
-      "count": 63
+      "count": 67
     },
     {
       "label": "Thu",
-      "count": 50
+      "count": 57
     },
     {
       "label": "Fri",
-      "count": 76
+      "count": 95
     },
     {
       "label": "Sat",
