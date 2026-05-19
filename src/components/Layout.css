@@ -23,8 +23,10 @@ body.cursor-custom label[for] {
   cursor: url('../assets/cursor/link.png') 4 0, pointer !important;
 }
 
-body.cursor-custom .project-link-card,
-body.cursor-custom .project-link-card * {
+body.cursor-custom .row-head,
+body.cursor-custom .row-head *,
+body.cursor-custom .filter-chip,
+body.cursor-custom .filter-chip * {
   cursor: url('../assets/cursor/link.png') 4 0, pointer !important;
 }
 
