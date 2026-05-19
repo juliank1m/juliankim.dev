@@ -1,6 +1,11 @@
+export type ProjectCategory = 'web' | 'data' | 'game'
+
 export type Project = {
   id: string
   title: string
+  kind: string
+  category: ProjectCategory
+  year: string
   summary: string
   description: string
   tags: string[]
@@ -17,6 +22,9 @@ export const projects: Project[] = [
   {
     id: 'pyclimb-project',
     title: 'PyClimb',
+    kind: 'Learning platform',
+    category: 'web',
+    year: '2026',
     summary: 'Learning-first coding platform with judge workflow, lessons, and leaderboard.',
     description:
       'A learning-first, end-to-end web application built intentionally step-by-step to understand real production-style architecture with clarity, correctness, and backend fundamentals.',
@@ -36,6 +44,9 @@ export const projects: Project[] = [
   {
     id: 'vlr-data-pipeline-project',
     title: 'VLR Data Pipeline',
+    kind: 'End-to-end ML pipeline',
+    category: 'data',
+    year: '2024',
     summary:
       'End-to-end data science pipeline analyzing ~47,000+ pro Valorant maps with ML models reaching ~95.9% accuracy.',
     description:
@@ -55,6 +66,9 @@ export const projects: Project[] = [
   {
     id: 'wannacram-project',
     title: 'WannaCram',
+    kind: 'AI study assistant',
+    category: 'web',
+    year: '2026',
     summary:
       'AI-powered study assistant that turns your lecture notes, slides, and exams into summaries, flashcards, and quizzes.',
     description:
@@ -73,30 +87,54 @@ export const projects: Project[] = [
   {
     id: 'course-tools-project',
     title: 'Course Tools',
+    kind: 'Calculator suite',
+    category: 'web',
+    year: '2025',
     summary: 'Calculators and utilities for linear algebra, calculus, chemistry, vectors, and CS.',
     description: 'A suite of calculators and utilities for linear algebra, calculus, chemistry, vectors, and CS workflows.',
     tags: ['React', 'TypeScript', 'Math Utilities'],
     github: 'https://github.com/juliank1m/course-tools',
     liveDemo: 'https://coursetools.juliankim.dev',
     previewSrc: 'https://coursetools.juliankim.dev',
+    featureHighlights: [
+      'Linear algebra, calculus, vector, and chemistry helpers.',
+      'Keyboard-first UX for quick repeated calculations.',
+      'Shared component system across tools.',
+    ],
     theme: 'indigo',
   },
   {
     id: 'willowbrook-project',
     title: 'Willowbrook',
+    kind: 'MonoGame title',
+    category: 'game',
+    year: '2024',
     summary: 'MonoGame DesktopGL title focused on gameplay-first loops and mechanics iteration.',
     description: 'A MonoGame DesktopGL project developed with C# and gameplay-first iteration loops.',
     tags: ['C#', 'MonoGame', 'Game Dev'],
     github: 'https://github.com/juliank1m/willowbrook-game',
+    featureHighlights: [
+      'Custom input + scene management for fast iteration.',
+      'Gameplay-first prototyping loop — feel before content.',
+      'Pixel-art sprite pipeline with content build automation.',
+    ],
     theme: 'lime',
   },
   {
     id: 'meow-meow-misses-home-project',
     title: 'Meow Meow Misses Home',
+    kind: 'MonoGame title',
+    category: 'game',
+    year: '2023',
     summary: 'MonoGame project tuned for game feel, pacing, and progression clarity.',
     description: 'A second MonoGame title focused on game feel, mechanics tuning, and level pacing.',
     tags: ['C#', 'MonoGame', 'Game Dev'],
     github: 'https://github.com/juliank1m/Meow-Meow-Misses-Home',
+    featureHighlights: [
+      'Tightly tuned single-mechanic gameplay loop.',
+      'Pacing experiments across progression milestones.',
+      'Authored pixel art and animation cycles.',
+    ],
     theme: 'amber',
   },
 ]
