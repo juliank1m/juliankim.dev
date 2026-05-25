@@ -6,7 +6,6 @@ type Tile = {
   label: string
   value: number
   hue: 'teal' | 'lilac' | 'coral' | 'gold'
-  title?: string
 }
 
 type MonthBucket = { key: string; label: string; count: number }
@@ -56,30 +55,10 @@ export default function GitHubActivity() {
   }, [])
 
   const tiles: Tile[] = [
-    {
-      label: 'Total',
-      value: a.totalContributions,
-      hue: 'teal',
-      title: 'Matches the GitHub contribution calendar total',
-    },
-    {
-      label: 'Commits',
-      value: a.totalCommits,
-      hue: 'lilac',
-      title: 'Public commit contributions reported by GitHub',
-    },
-    {
-      label: 'PRs',
-      value: a.totalPullRequests,
-      hue: 'coral',
-      title: 'Pull request contributions reported by GitHub',
-    },
-    {
-      label: 'Repos',
-      value: a.totalRepositories,
-      hue: 'gold',
-      title: 'Repositories with commit contributions reported by GitHub',
-    },
+    { label: 'Total', value: a.totalContributions, hue: 'teal' },
+    { label: 'Commits', value: a.totalCommits, hue: 'lilac' },
+    { label: 'PRs', value: a.totalPullRequests, hue: 'coral' },
+    { label: 'Repos', value: a.totalRepositories, hue: 'gold' },
   ]
 
   const maxMonthly = Math.max(1, ...a.monthly.map((m) => m.count))
@@ -108,7 +87,6 @@ export default function GitHubActivity() {
           <div
             key={tile.label}
             className={`gh-stats-tile gh-hue-${tile.hue}`}
-            title={tile.title}
           >
             <strong>{tile.value.toLocaleString()}</strong>
             <span>{tile.label}</span>
