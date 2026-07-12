@@ -70,7 +70,7 @@ export default function Terminal() {
         break
       case 'contact':
         append(
-          { kind: 'sys', text: 'mailto:juliankim4321@gmail.com' },
+          { kind: 'sys', text: 'mailto:julian.kim@uwaterloo.ca' },
           { kind: 'sys', text: 'github.com/juliank1m' },
         )
         break

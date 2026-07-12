@@ -68,7 +68,7 @@ export default function Home() {
           <MagneticButtonLink href="https://devpost.com/juliank1m" target="_blank" rel="noopener noreferrer" variant="secondary" className="ui-button-devpost">
             <DevpostIcon /> Devpost
           </MagneticButtonLink>
-          <MagneticButtonLink href="mailto:juliankim4321@gmail.com" variant="outline">
+          <MagneticButtonLink href="mailto:julian.kim@uwaterloo.ca" variant="outline">
             <EmailIcon /> Email
           </MagneticButtonLink>
           <Link

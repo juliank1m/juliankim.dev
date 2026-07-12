@@ -40,7 +40,7 @@ function StickyContent() {
     <>
       <strong>★ status</strong>
       Available for <b>winter '27</b> internships. drop me a line if you're hiring.
-      <a href="mailto:juliankim4321@gmail.com">→ email me</a>
+      <a href="mailto:julian.kim@uwaterloo.ca">→ email me</a>
     </>
   )
 }
