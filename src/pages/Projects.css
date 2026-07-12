@@ -91,26 +91,71 @@
   margin-bottom: 28px;
 }
 
-.projects-page .proj-section-head {
+.projects-page .proj-section-toggle {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
   margin: 10px 0 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
   opacity: 0;
   animation: proj-rise 480ms cubic-bezier(0.4, 0.9, 0.3, 1) forwards;
 }
-.projects-page .proj-section-head .proj-section-label {
+.projects-page .proj-section-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 2.5px solid var(--line);
+  background: #fffdf5;
+  padding: 7px 12px;
+  box-shadow: 3px 3px 0 var(--shadow);
+  transition: transform 120ms, box-shadow 120ms;
+}
+.projects-page .proj-section-toggle:hover .proj-section-pill {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+.projects-page .proj-section-toggle:active .proj-section-pill {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+.projects-page .proj-section-pill .proj-section-label {
   font-family: 'Silkscreen', monospace;
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   color: #b09045;
   text-transform: uppercase;
   white-space: nowrap;
 }
-.projects-page .proj-section-head .proj-section-rule {
+.projects-page .proj-section-pill .proj-section-count {
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  color: #6a5a2d;
+  background: var(--gold);
+  border: 1.5px solid #d9b958;
+  padding: 1px 5px;
+}
+.projects-page .proj-section-pill .proj-section-chevron {
+  font-size: 11px;
+  color: #b09045;
+  transition: transform 160ms ease;
+}
+.projects-page .proj-section-toggle.open .proj-section-pill .proj-section-chevron {
+  transform: rotate(90deg);
+}
+.projects-page .proj-section-rule {
   flex: 1;
   height: 0;
   border-top: 2px dashed var(--line-soft);
+}
+.projects-page .proj-games {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .projects-page .proj-row {
@@ -632,7 +677,7 @@
 /* honour reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .projects-page .proj-head,
-  .projects-page .proj-section-head,
+  .projects-page .proj-section-toggle,
   .projects-page .proj-row,
   .projects-page .proj-foot {
     animation: none !important;

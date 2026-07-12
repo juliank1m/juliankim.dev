@@ -160,6 +160,7 @@ function ProjectRow({
 
 export default function Projects() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [showGames, setShowGames] = useState(false)
 
   const toggle = (id: string) => setExpandedId((current) => (current === id ? null : id))
 
@@ -201,22 +202,38 @@ export default function Projects() {
 
         {gameProjects.length ? (
           <>
-            <div
-              className="proj-section-head"
+            <button
+              type="button"
+              className={`proj-section-toggle${showGames ? ' open' : ''}`}
+              aria-expanded={showGames}
+              aria-controls="hs-games"
               style={{ animationDelay: `${200 + mainProjects.length * 80}ms` }}
+              onClick={() => setShowGames((current) => !current)}
             >
-              <span className="proj-section-label">Fun highschool projects</span>
+              <span className="proj-section-pill">
+                <span className="proj-section-chevron" aria-hidden="true">
+                  ▸
+                </span>
+                <span className="proj-section-label">
+                  {showGames ? 'Hide' : 'Show'} fun highschool projects
+                </span>
+                <span className="proj-section-count">{gameProjects.length}</span>
+              </span>
               <span className="proj-section-rule" aria-hidden="true" />
-            </div>
-            {gameProjects.map((project, gameIndex) => (
-              <ProjectRow
-                key={project.id}
-                project={project}
-                index={mainProjects.length + gameIndex}
-                expanded={expandedId === project.id}
-                onToggle={() => toggle(project.id)}
-              />
-            ))}
+            </button>
+            {showGames ? (
+              <div id="hs-games" className="proj-games">
+                {gameProjects.map((project, gameIndex) => (
+                  <ProjectRow
+                    key={project.id}
+                    project={project}
+                    index={mainProjects.length + gameIndex}
+                    expanded={expandedId === project.id}
+                    onToggle={() => toggle(project.id)}
+                  />
+                ))}
+              </div>
+            ) : null}
           </>
         ) : null}
       </div>
