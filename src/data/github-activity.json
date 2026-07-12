@@ -1,37 +1,27 @@
 {
   "username": "juliank1m",
-  "fetchedAt": "2026-05-16T03:26:20.467Z",
-  "totalContributions": 477,
-  "totalCommits": 329,
+  "fetchedAt": "2026-07-12T21:04:42.669Z",
+  "totalContributions": 754,
+  "totalCommits": 366,
   "totalPullRequests": 25,
   "totalIssues": 0,
   "totalPullRequestReviews": 0,
-  "totalRepositoryContributions": 12,
-  "restrictedContributions": 111,
-  "totalRepositories": 13,
-  "activeDays": 63,
-  "longestStreak": 17,
-  "currentStreak": 17,
+  "totalRepositoryContributions": 10,
+  "restrictedContributions": 353,
+  "totalRepositories": 11,
+  "activeDays": 97,
+  "longestStreak": 21,
+  "currentStreak": 0,
   "busiestDay": {
-    "date": "2026-01-31",
-    "count": 34,
+    "date": "2026-07-01",
+    "count": 41,
     "level": 4
   },
   "busiestWeekday": {
-    "label": "Fri",
-    "count": 95
+    "label": "Sat",
+    "count": 140
   },
   "monthly": [
-    {
-      "key": "2025-06",
-      "label": "Jun",
-      "count": 0
-    },
-    {
-      "key": "2025-07",
-      "label": "Jul",
-      "count": 0
-    },
     {
       "key": "2025-08",
       "label": "Aug",
@@ -80,37 +70,47 @@
     {
       "key": "2026-05",
       "label": "May",
-      "count": 95
+      "count": 167
+    },
+    {
+      "key": "2026-06",
+      "label": "Jun",
+      "count": 117
+    },
+    {
+      "key": "2026-07",
+      "label": "Jul",
+      "count": 88
     }
   ],
   "weekdays": [
     {
       "label": "Sun",
-      "count": 39
+      "count": 82
     },
     {
       "label": "Mon",
-      "count": 83
+      "count": 114
     },
     {
       "label": "Tue",
-      "count": 52
+      "count": 90
     },
     {
       "label": "Wed",
-      "count": 67
+      "count": 129
     },
     {
       "label": "Thu",
-      "count": 57
+      "count": 79
     },
     {
       "label": "Fri",
-      "count": 95
+      "count": 120
     },
     {
       "label": "Sat",
-      "count": 84
+      "count": 140
     }
   ]
 }

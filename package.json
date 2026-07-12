@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "update:activity": "node scripts/update-github-activity.mjs",
+    "predeploy": "npm run update:activity",
     "deploy": "npm run build && gh-pages -d dist -b main"
   },
   "dependencies": {
