@@ -163,6 +163,9 @@ export default function Projects() {
 
   const toggle = (id: string) => setExpandedId((current) => (current === id ? null : id))
 
+  const mainProjects = projects.filter((project) => project.category !== 'game')
+  const gameProjects = projects.filter((project) => project.category === 'game')
+
   return (
     <section className="projects-page">
       <header className="proj-head">
@@ -186,7 +189,7 @@ export default function Projects() {
       </header>
 
       <div className="proj-list">
-        {projects.map((project, index) => (
+        {mainProjects.map((project, index) => (
           <ProjectRow
             key={project.id}
             project={project}
@@ -195,6 +198,27 @@ export default function Projects() {
             onToggle={() => toggle(project.id)}
           />
         ))}
+
+        {gameProjects.length ? (
+          <>
+            <div
+              className="proj-section-head"
+              style={{ animationDelay: `${200 + mainProjects.length * 80}ms` }}
+            >
+              <span className="proj-section-label">Fun highschool projects</span>
+              <span className="proj-section-rule" aria-hidden="true" />
+            </div>
+            {gameProjects.map((project, gameIndex) => (
+              <ProjectRow
+                key={project.id}
+                project={project}
+                index={mainProjects.length + gameIndex}
+                expanded={expandedId === project.id}
+                onToggle={() => toggle(project.id)}
+              />
+            ))}
+          </>
+        ) : null}
       </div>
 
       <p className="proj-foot">
