@@ -1,16 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { projects, type Project, type ProjectCategory } from '../data/projects'
+import { projects, type Project } from '../data/projects'
 import './Projects.css'
-
-type Filter = 'all' | ProjectCategory
-
-const FILTERS: { id: Filter; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'web', label: 'Web Apps' },
-  { id: 'data', label: 'Data & ML' },
-  { id: 'game', label: 'Games' },
-]
 
 function ProjectPreview({ project }: { project: Project }) {
   const livePreview = Boolean(project.previewSrc) && !project.previewBlocked
@@ -76,20 +67,18 @@ function ProjectRow({
   project,
   index,
   expanded,
-  filtered,
   onToggle,
 }: {
   project: Project
   index: number
   expanded: boolean
-  filtered: boolean
   onToggle: () => void
 }) {
   const panelId = `proj-panel-${project.id}`
 
   return (
     <article
-      className={`proj-row theme-${project.theme}${expanded ? ' expanded' : ''}${filtered ? ' filtered' : ''}`}
+      className={`proj-row theme-${project.theme}${expanded ? ' expanded' : ''}`}
       style={{ animationDelay: `${200 + index * 80}ms` }}
     >
       <h2 className="row-heading">
@@ -171,21 +160,13 @@ function ProjectRow({
 
 export default function Projects() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [filter, setFilter] = useState<Filter>('all')
 
   const toggle = (id: string) => setExpandedId((current) => (current === id ? null : id))
-
-  const counts: Record<Filter, number> = {
-    all: projects.length,
-    web: projects.filter((project) => project.category === 'web').length,
-    data: projects.filter((project) => project.category === 'data').length,
-    game: projects.filter((project) => project.category === 'game').length,
-  }
 
   return (
     <section className="projects-page">
       <header className="proj-head">
-        <div className="eyebrow">Select Work · 2023 → 2026</div>
+        <div className="eyebrow">Available for Winter '27 internships</div>
         <h1>Projects, shipped and in flight.</h1>
         <p className="lede">
           A small collection of things I've built — backend platforms, data pipelines, AI tools, and a couple of
@@ -196,27 +177,13 @@ export default function Projects() {
             <b>{projects.length}</b> projects
           </span>
           <span className="meta-pill">
-            <b>4</b> shipped
+            <b>5</b> shipped
           </span>
           <span className="meta-pill">
             <b>Stacks</b> Python · TS · C#
           </span>
         </div>
       </header>
-
-      <div className="filter-row" role="group" aria-label="Filter projects">
-        {FILTERS.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            className={`filter-chip${filter === id ? ' active' : ''}`}
-            aria-pressed={filter === id}
-            onClick={() => setFilter(id)}
-          >
-            {label} <span className="count">{counts[id]}</span>
-          </button>
-        ))}
-      </div>
 
       <div className="proj-list">
         {projects.map((project, index) => (
@@ -225,7 +192,6 @@ export default function Projects() {
             project={project}
             index={index}
             expanded={expandedId === project.id}
-            filtered={filter !== 'all' && project.category !== filter}
             onToggle={() => toggle(project.id)}
           />
         ))}

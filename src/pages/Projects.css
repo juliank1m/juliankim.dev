@@ -82,55 +82,6 @@
 }
 
 /* ============================================================
-   FILTER CHIPS
-   ============================================================ */
-.projects-page .filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
-  opacity: 0;
-  animation: proj-rise 480ms 100ms cubic-bezier(0.4, 0.9, 0.3, 1) forwards;
-}
-.projects-page .filter-chip {
-  border: 2.5px solid var(--line-soft);
-  background: #ffffff;
-  padding: 8px 14px;
-  font-family: 'Silkscreen', monospace;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--ink-2);
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--shadow);
-  transition: transform 120ms, box-shadow 120ms;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.projects-page .filter-chip .count {
-  background: #f5f3ff;
-  color: var(--ink-3);
-  padding: 1px 5px;
-  font-size: 10px;
-  border: 1.5px solid var(--line-soft);
-}
-.projects-page .filter-chip:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--shadow);
-}
-.projects-page .filter-chip.active {
-  background: var(--gold);
-  color: #6a5a2d;
-  border-color: #d9b958;
-}
-.projects-page .filter-chip.active .count {
-  background: #fff9db;
-  border-color: #d9b958;
-  color: #6a5a2d;
-}
-
-/* ============================================================
    PROJECT ROWS — vertical expanding accordion
    ============================================================ */
 .projects-page .proj-list {
@@ -173,13 +124,6 @@
 .projects-page .proj-row.theme-indigo { --rc: #c5d3ff; --rcb: #7691da; --rct: #4a5b97; --rcl: #eef1ff; }
 .projects-page .proj-row.theme-lime   { --rc: #cdf4be; --rcb: #8ec77a; --rct: #4a6e3e; --rcl: #f4ffef; }
 .projects-page .proj-row.theme-amber  { --rc: #ffe8a1; --rcb: #c79e3a; --rct: #6a5a2d; --rcl: #fff9eb; }
-
-.projects-page .proj-row.filtered {
-  opacity: 0.28;
-  filter: saturate(0.5);
-  transform: scale(0.985);
-  pointer-events: none;
-}
 
 /* HEADING WRAPPER — keeps <h2> document semantics around the trigger */
 .projects-page .row-heading {
@@ -486,7 +430,7 @@
 }
 
 /* live-site embed — replaces the placeholder mockup for projects
-   that expose a usable previewSrc (PyClimb / WannaCram / Course Tools) */
+   that expose a usable previewSrc (WannaCram / mddlmn) */
 .projects-page .row-preview .pv-body.is-live {
   display: block;
   padding: 0;
@@ -666,20 +610,15 @@
 /* honour reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .projects-page .proj-head,
-  .projects-page .filter-row,
   .projects-page .proj-row,
   .projects-page .proj-foot {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
-  .projects-page .proj-row.filtered {
-    opacity: 0.28 !important;
-  }
   .projects-page .row-panel,
   .projects-page .row-panel-content,
   .projects-page .row-chevron,
-  .projects-page .filter-chip,
   .projects-page .row-btn {
     transition: none !important;
   }
