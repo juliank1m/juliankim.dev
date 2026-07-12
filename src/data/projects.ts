@@ -33,7 +33,6 @@ export const projects: Project[] = [
     github: 'https://github.com/juliank1m/val-predict',
     liveDemo: 'https://valpredict.juliankim.dev',
     previewSrc: 'https://valpredict.juliankim.dev',
-    previewBlocked: true,
     featureHighlights: [
       'XGBoost win-probability model over 87 engineered features — Elo, rolling stats, map-specific, H2H, roster stability, and player/agent composition.',
       'VLR.gg odds scraped from 5 bookmakers for market-implied probability and expected-value display.',
