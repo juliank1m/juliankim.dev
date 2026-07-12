@@ -9,7 +9,7 @@ import Terminal from './Terminal'
 import SnakeGame from './SnakeGame'
 import './Layout.css'
 
-const labels = ["available for summer '26 internships", 'full-stack | AI', 'software eng @ uwaterloo']
+const labels = ["available for winter '27 internships", 'full-stack | AI', 'software eng @ uwaterloo']
 const TRAIL_GRID_SIZE = 160
 
 /* ---------- floating-window content ---------- */
@@ -39,7 +39,7 @@ function StickyContent() {
   return (
     <>
       <strong>★ status</strong>
-      Available for <b>summer '26</b> internships. drop me a line if you're hiring.
+      Available for <b>winter '27</b> internships. drop me a line if you're hiring.
       <a href="mailto:juliankim4321@gmail.com">→ email me</a>
     </>
   )
